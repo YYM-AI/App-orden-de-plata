@@ -1,0 +1,12 @@
+{
+  "semi": true,
+  "singleQuote": true,
+  "ignorePatterns": [
+    ".next/**",
+    "node_modules/**",
+    "playwright-report/**",
+    "test-results/**",
+    "next-env.d.ts",
+    "package-lock.json"
+  ]
+}

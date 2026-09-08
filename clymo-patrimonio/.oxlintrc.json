@@ -1,0 +1,11 @@
+{
+  "plugins": ["typescript", "react", "jsx-a11y"],
+  "categories": { "correctness": "error" },
+  "ignorePatterns": [
+    ".next/**",
+    "node_modules/**",
+    "playwright-report/**",
+    "test-results/**",
+    "next-env.d.ts"
+  ]
+}
