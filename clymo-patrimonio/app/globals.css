@@ -1584,3 +1584,83 @@ main {
     text-align: left;
   }
 }
+/* Authenticated staging controls reuse the Milestone 1 type and spacing scale. */
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.login-card {
+  width: min(100%, 480px);
+  padding: 32px;
+}
+.login-card .brand {
+  margin-bottom: 32px;
+}
+.login-card label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+.login-card input {
+  width: 100%;
+  min-width: 0;
+}
+.account-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.access-badge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #edf3ff;
+  color: #153f7c;
+}
+.security-controls {
+  margin-top: 24px;
+  display: grid;
+  gap: 24px;
+}
+.danger-button {
+  background: #8b2430;
+  color: white;
+  border: 1px solid #8b2430;
+}
+.members-list {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+.members-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+.build-id {
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .login-page {
+    padding: 16px;
+  }
+  .login-card {
+    padding: 24px;
+  }
+  .topbar .account-tools {
+    width: 100%;
+  }
+  .account-tools select {
+    max-width: 100%;
+  }
+  .security-controls .actions {
+    align-items: stretch;
+  }
+}

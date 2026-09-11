@@ -1,28 +1,26 @@
 # Architecture
 
-## Independent modular application
+M2 retains the independent Next.js App Router application and the M1 exact-decimal financial engine. Clymo Alerts remains outside the dependency graph.
 
 ```text
-Next.js routes / /fuentes /revision /configuracion
-    → React client provider + accessible UI
-    → validated commands → immutable new state
-    → pure financial engine → valued components → snapshot
-    → PrototypeRepository → browser localStorage (prototype only)
-                           → in-memory repository (tests)
+Spanish React UI → authenticated same-origin API → validated application command
+  → PrototypeRepository interface → SupabaseRepository → guarded RPC / PostgreSQL
+
+Financial engine → domain models / decimal.js / policy (no Supabase imports)
 ```
 
-Next serves static route shells and client JavaScript. Financial state stays in the browser; no application API receives it. Context holds one validated state and derives snapshots. The four routes share state across navigation. User input is rendered as text; no raw HTML interpolation or financial logging is used.
+`domain/commands.ts` appends observations and decisions and checks current command authority. `domain/validation.ts` validates reference integrity and economic consistency; historical authors remain identifiable after membership changes. New authors must be the authenticated owner when the database accepts an append. `domain/engine.ts` computes exact decimal values, with an explicit eight-decimal valuation boundary; presentation rounding does not rewrite observations.
 
-`domain/model.ts`: Zod contracts and exported entity types. `domain/validation.ts`: runtime shape, identity, ownership boundary, currency/reference and obligation-journal checks. `domain/commands.ts`: validated transformations that clone their input and append evidence/decisions. `domain/engine.ts`: observation selection, ownership, inclusion, rates, components, snapshot and review derivation. `domain/freshness.ts`: versioned date rules. `data/fixture.ts`: deterministic synthetic adapter.
+`persistence/repository.ts` contains the existing interface. The production adapter loads a consistent MVCC state using `read_household`, and saves through an atomic owner-only RPC. The old local and memory adapters live only in `tests/legacy/` for preserved M1 regression coverage. They are not imported by the application.
 
-`PrototypeRepository` exposes `load`, `save(expectedRevision)`, and `reset`. Local writes serialize one validated state. The UI updates only after persistence succeeds; quota failures do not announce a successful change. Corrupted stored data is preserved until explicit reset. Revision checking and storage-event warnings detect stale-tab edits; this is not a transactional multi-user database or comprehensive concurrent-writer solution.
+The server uses fresh official `auth.getUser()` validation, the live profile allowlist and a live household membership on each request. SQL independently checks the Auth session, allowlist and membership. Cookie values are managed through official Supabase SSR clients. The UI has no Supabase administration client or service key.
 
-Reset is an explicitly confirmed destructive operation on disposable demo state. Normal observations, ownership, inclusion, source-binding resolutions and obligation events are append-only. Replayed command identities do not append again.
+A household is reconstructed from normalized per-entity tables, not one whole-household JSON document. Each domain row retains a JSON payload for lossless string values and original domain identifiers; generated stored numeric columns and scoped UUID foreign keys enforce financial/relational constraints. Household rows contain metadata, policy and settings only.
 
-## Extending later
+Saving locks the household, checks expected revision, compares old evidence against proposed evidence, appends new rows, stores a valuation run/components/snapshot, records a command receipt and a minimal audit event in one transaction. A repeated command UUID is idempotent. Stale concurrent revisions return a conflict. Reset and deletion use narrowly granted owner-only functions; generic table updates cannot rewrite evidence.
 
-Replace the repository with a Patrimonio-owned service/PostgreSQL implementation, keeping domain commands and calculations. Real collaboration requires server-side authentication/authorization and atomic transactions, not trusted client state. Use numeric monetary columns, immutable evidence tables, and append-only decision/event tables. Provider adapters should produce validated domain observations; they are not implemented in this milestone. There are no fake OAuth, extraction, market feed or bank adapter implementations.
+The authenticated client keeps only an in-memory view. Navigation, visibility restoration, refresh and periodic validation retrieve current authorized state. Hidden pages clear financial state; revocation clears the view at the next validated request. There is no service worker or persistent financial client cache. Protected routes and responses use no-store. A full navigation changes the selected household.
 
-A progressive, read-only WebMCP tool (`get_synthetic_net_worth`) returns the same snapshot shown by the interface when the browser supports the experimental API. It cannot change data or connect an institution. Normal UI operation does not depend on WebMCP.
+Official references: [Supabase SSR clients](https://supabase.com/docs/guides/auth/server-side/creating-a-client), [PostgreSQL RLS guidance](https://supabase.com/docs/guides/database/postgres/row-level-security). These do not constitute independent certification of this implementation.
 
-No PWA/service worker, external fonts, build-time remote content, root workspace dependency, shared database, shared credentials, cloud provisioning or release dependency on Alerts. Basic response headers and noindex metadata are present; they are not an authentication system.
+The optional M1 WebMCP snapshot component remains inactive in the authenticated application pending a separate authorization-lifecycle review. It exposes no registered financial tool in M2.

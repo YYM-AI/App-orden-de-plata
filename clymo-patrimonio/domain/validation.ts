@@ -109,8 +109,10 @@ export function validateState(input: unknown): DemoState {
     ...s.resolutions,
     ...s.obligationEvents,
   ]) {
-    if (!s.memberships.some((m) => m.userId === d.actorId && m.role === 'admin' && m.active))
-      throw Error('La decisión requiere un administrador del hogar.');
+    // Evidence retains its author after role changes or account deletion. Authorization
+    // is enforced when appending (commands + database), never retroactively rewritten.
+    if (!s.users.some((u) => u.id === d.actorId))
+      throw Error('La decisión requiere un autor identificable.');
     if ('accountId' in d) account(d.accountId);
     if ('partyId' in d) party(d.partyId);
   }

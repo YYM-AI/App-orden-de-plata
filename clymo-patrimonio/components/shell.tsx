@@ -19,7 +19,7 @@ const links = [
 ];
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
-  const { state, reviews, execute } = useDemo();
+  const { state, reviews, execute, canEdit, memberships, logout } = useDemo();
   const pending = reviews.filter((r) => r.status === 'pending').length;
   return (
     <div className="app-shell">
@@ -27,7 +27,11 @@ export function Shell({ children }: { children: ReactNode }) {
         Ir al contenido
       </a>
       <aside className="sidebar">
-        <Link className="brand" href="/" aria-label="Clymo Patrimonio, inicio">
+        <Link
+          className="brand"
+          href={'/?hogar=' + state.household.id}
+          aria-label="Clymo Patrimonio, inicio"
+        >
           <span className="brand-symbol">c</span>
           <span>
             clymo<small>PATRIMONIO</small>
@@ -36,7 +40,11 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="sidebar-caption">TU ESPACIO</div>
         <nav aria-label="Navegación principal">
           {links.map(({ href, label, Icon }) => (
-            <Link key={href} href={href} aria-current={path === href ? 'page' : undefined}>
+            <Link
+              key={href}
+              href={href + '?hogar=' + state.household.id}
+              aria-current={path === href ? 'page' : undefined}
+            >
               <Icon aria-hidden="true" size={21} />
               <span>{label}</span>
               {href === '/revision' && pending > 0 && (
@@ -50,8 +58,8 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="sidebar-foot">
           <ShieldCheck size={24} aria-hidden="true" />
           <strong>Un espacio de demostración</strong>
-          <p>Datos ficticios, guardados únicamente en este navegador.</p>
-          <Link href="/configuracion">
+          <p>Datos ficticios en una base de datos con acceso autorizado.</p>
+          <Link href={'/configuracion?hogar=' + state.household.id}>
             Acerca de tus datos <ArrowUpRight size={16} />
           </Link>
         </div>
@@ -69,6 +77,7 @@ export function Shell({ children }: { children: ReactNode }) {
             Mostrar en
             <select
               aria-label="Moneda de presentación"
+              disabled={!canEdit}
               value={state.settings.reportingCurrency}
               onChange={(e) =>
                 void execute(
@@ -81,20 +90,39 @@ export function Shell({ children }: { children: ReactNode }) {
               <option value="USD">USD · Dólar</option>
             </select>
           </label>
+          <div className="account-tools">
+            <span className="access-badge">
+              {canEdit ? 'Propietario' : 'Ayudante · solo lectura'}
+            </span>
+            {memberships.length > 1 && (
+              <select
+                aria-label="Cambiar hogar"
+                value={state.household.id}
+                onChange={(e) => window.location.assign('/?hogar=' + e.target.value)}
+              >
+                {memberships.map((m) => (
+                  <option key={m.household_id} value={m.household_id}>
+                    {m.households.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            <button className="button secondary" onClick={() => void logout()}>
+              Cerrar sesión
+            </button>
+          </div>
         </header>
         <div className="privacy-banner">
           <ShieldCheck size={18} aria-hidden="true" />
           <p>
-            Este prototipo utiliza únicamente datos ficticios. No ingreses ni subas información
-            financiera real.
+            STAGING — DATOS FICTICIOS. Este prototipo utiliza únicamente datos ficticios. No
+            ingreses ni subas información financiera real.
           </p>
         </div>
         <main id="main" tabIndex={-1}>
           {children}
         </main>
-        <footer className="app-footer">
-          Clymo Patrimonio · Demostración local · Corte fijo: 4 de septiembre de 2026
-        </footer>
+        <footer className="app-footer">Clymo Patrimonio · Staging privado · Datos ficticios</footer>
       </div>
     </div>
   );

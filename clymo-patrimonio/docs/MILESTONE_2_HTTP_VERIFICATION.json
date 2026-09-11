@@ -1,0 +1,221 @@
+{
+  "at": "2026-09-10T19:47:52.966Z",
+  "target": "http://127.0.0.1:3100",
+  "kind": "Independent local HTTP/PostgREST checks; not manual UI",
+  "passed": 53,
+  "failed": 0,
+  "results": [
+    {
+      "check": "anonymous redirect /",
+      "result": "PASS"
+    },
+    {
+      "check": "no financial HTML /",
+      "result": "PASS"
+    },
+    {
+      "check": "no-store /",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous redirect /fuentes",
+      "result": "PASS"
+    },
+    {
+      "check": "no financial HTML /fuentes",
+      "result": "PASS"
+    },
+    {
+      "check": "no-store /fuentes",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous redirect /revision",
+      "result": "PASS"
+    },
+    {
+      "check": "no financial HTML /revision",
+      "result": "PASS"
+    },
+    {
+      "check": "no-store /revision",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous redirect /configuracion",
+      "result": "PASS"
+    },
+    {
+      "check": "no financial HTML /configuracion",
+      "result": "PASS"
+    },
+    {
+      "check": "no-store /configuracion",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous API /api/households",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous API /api/households/11111111-1111-4111-8111-111111111111",
+      "result": "PASS"
+    },
+    {
+      "check": "anonymous API /api/diagnostics",
+      "result": "PASS"
+    },
+    {
+      "check": "ownerA API sign-in",
+      "result": "PASS"
+    },
+    {
+      "check": "helperA API sign-in",
+      "result": "PASS"
+    },
+    {
+      "check": "ownerB API sign-in",
+      "result": "PASS"
+    },
+    {
+      "check": "owner reads A",
+      "result": "PASS"
+    },
+    {
+      "check": "manually deleted household old API denied",
+      "result": "PASS"
+    },
+    {
+      "check": "owner export json",
+      "result": "PASS"
+    },
+    {
+      "check": "export excludes B json",
+      "result": "PASS"
+    },
+    {
+      "check": "download header json",
+      "result": "PASS"
+    },
+    {
+      "check": "export no-store json",
+      "result": "PASS"
+    },
+    {
+      "check": "export no credential fields json",
+      "result": "PASS"
+    },
+    {
+      "check": "export version",
+      "result": "PASS"
+    },
+    {
+      "check": "export household",
+      "result": "PASS"
+    },
+    {
+      "check": "canonical exported net worth",
+      "result": "PASS"
+    },
+    {
+      "check": "owner export csv",
+      "result": "PASS"
+    },
+    {
+      "check": "export excludes B csv",
+      "result": "PASS"
+    },
+    {
+      "check": "download header csv",
+      "result": "PASS"
+    },
+    {
+      "check": "export no-store csv",
+      "result": "PASS"
+    },
+    {
+      "check": "export no credential fields csv",
+      "result": "PASS"
+    },
+    {
+      "check": "CSV UTF8",
+      "result": "PASS"
+    },
+    {
+      "check": "CSV provenance header",
+      "result": "PASS"
+    },
+    {
+      "check": "helper reads A",
+      "result": "PASS"
+    },
+    {
+      "check": "helper denied command",
+      "result": "PASS"
+    },
+    {
+      "check": "helper denied reset",
+      "result": "PASS"
+    },
+    {
+      "check": "helper denied export",
+      "result": "PASS"
+    },
+    {
+      "check": "helper denied delete",
+      "result": "PASS"
+    },
+    {
+      "check": "helper denied members",
+      "result": "PASS"
+    },
+    {
+      "check": "B reads B",
+      "result": "PASS"
+    },
+    {
+      "check": "B cannot read A",
+      "result": "PASS"
+    },
+    {
+      "check": "B denied A export",
+      "result": "PASS"
+    },
+    {
+      "check": "B denied A delete",
+      "result": "PASS"
+    },
+    {
+      "check": "real PostgREST helper INSERT RLS",
+      "result": "PASS"
+    },
+    {
+      "check": "real PostgREST helper SELECT B",
+      "result": "PASS"
+    },
+    {
+      "check": "real PostgREST helper UPDATE grant",
+      "result": "PASS"
+    },
+    {
+      "check": "security header x-content-type-options",
+      "result": "PASS"
+    },
+    {
+      "check": "security header x-frame-options",
+      "result": "PASS"
+    },
+    {
+      "check": "security header referrer-policy",
+      "result": "PASS"
+    },
+    {
+      "check": "noindex",
+      "result": "PASS"
+    },
+    {
+      "check": "CSP frame ancestors",
+      "result": "PASS"
+    }
+  ]
+}

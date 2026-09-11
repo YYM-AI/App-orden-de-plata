@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { authenticate, resetA } from '../support/browser-auth';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdir } from 'node:fs/promises';
 const go = async (page: Page, name: 'Resumen' | 'Fuentes' | 'Revisión' | 'Configuración') => {
@@ -27,6 +28,8 @@ async function resetDemo(page: Page) {
   await go(page, 'Resumen');
 }
 test.beforeEach(async ({ page }) => {
+  await authenticate(page);
+  await resetA(page);
   await page.goto('/');
   await expect(page.getByTestId('net-worth')).toHaveText('CLP 52.540.000');
 });
@@ -253,7 +256,10 @@ for (const width of [320, 390, 768, 1440]) {
     }
     await go(page, 'Resumen');
     await mkdir('docs/screenshots', { recursive: true });
-    await page.screenshot({ path: `docs/screenshots/summary-${width}.png`, fullPage: true });
+    await page.screenshot({
+      path: `docs/screenshots/milestone-2-summary-${width}.png`,
+      fullPage: true,
+    });
   });
 }
 test('200% text enlargement and reduced motion preserve navigation and content', async ({

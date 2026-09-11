@@ -29,7 +29,7 @@ const eventLabels: Record<string, string> = {
   dispute: 'Disputa',
 };
 export function Sources() {
-  const { state, snapshot, reviews } = useDemo();
+  const { state, snapshot, reviews, canEdit } = useDemo();
   const [category, setCategory] = useState('all');
   const [status, setStatus] = useState('all');
   const [selected, setSelected] = useState<string | null>(null);
@@ -61,11 +61,15 @@ export function Sources() {
           <p className="muted">Cuentas, bienes y deudas del hogar ficticio.</p>
         </div>
         <div className="actions">
-          <button className="button primary" onClick={() => setAdding('asset')}>
+          <button className="button primary" disabled={!canEdit} onClick={() => setAdding('asset')}>
             <Plus size={19} />
             Agregar activo
           </button>
-          <button className="button secondary" onClick={() => setAdding('liability')}>
+          <button
+            className="button secondary"
+            disabled={!canEdit}
+            onClick={() => setAdding('liability')}
+          >
             <Plus size={19} />
             Agregar pasivo
           </button>
@@ -195,7 +199,7 @@ function ManualForm({ side, onClose }: { side: 'asset' | 'liability'; onClose: (
   return (
     <Modal
       title={side === 'asset' ? 'Agregar activo ficticio' : 'Agregar pasivo ficticio'}
-      description="Usa un nombre inventado. Todos los datos se guardan únicamente en este navegador."
+      description="Usa un nombre inventado. Los datos se guardan en la base de datos de este hogar ficticio."
       onClose={onClose}
     >
       <Form
@@ -276,7 +280,7 @@ function ManualForm({ side, onClose }: { side: 'asset' | 'liability'; onClose: (
 }
 
 export function SourceDetail({ accountId, onClose }: { accountId: string; onClose: () => void }) {
-  const { state, snapshot, execute, error } = useDemo();
+  const { state, snapshot, execute, error, canEdit } = useDemo();
   const [mode, setMode] = useState<'observation' | 'ownership' | 'payment' | null>(null);
   const a = state.accounts.find((a) => a.id === accountId)!;
   const c = snapshot.components.find((c) => c.accountId === accountId)!;
@@ -403,50 +407,52 @@ export function SourceDetail({ accountId, onClose }: { accountId: string; onClos
           fecha de la cantidad.
         </p>
       )}
-      <div className="detail-actions">
-        {!obligation && (
+      {canEdit && (
+        <div className="detail-actions">
+          {!obligation && (
+            <button
+              className="button secondary"
+              onClick={() => setMode(mode === 'observation' ? null : 'observation')}
+            >
+              Agregar observación
+            </button>
+          )}
           <button
             className="button secondary"
-            onClick={() => setMode(mode === 'observation' ? null : 'observation')}
+            onClick={() => setMode(mode === 'ownership' ? null : 'ownership')}
           >
-            Agregar observación
+            Confirmar propiedad
           </button>
-        )}
-        <button
-          className="button secondary"
-          onClick={() => setMode(mode === 'ownership' ? null : 'ownership')}
-        >
-          Confirmar propiedad
-        </button>
-        {obligation && state.settings.obligationsVisible && (
-          <button
-            className="button primary"
-            onClick={() => setMode(mode === 'payment' ? null : 'payment')}
-          >
-            Registrar pago o evento
-          </button>
-        )}
-        {a.manual && (
-          <button
-            className="button secondary"
-            onClick={() =>
-              void execute({
-                type: 'inclusion',
-                accountId,
-                include: inclusion?.include === false,
-                effectiveDate: state.cutoff,
-                reason:
-                  inclusion?.include === false
-                    ? 'Inclusión manual confirmada desde el detalle.'
-                    : 'Exclusión manual confirmada desde el detalle.',
-              })
-            }
-          >
-            {inclusion?.include === false ? 'Incluir fuente elegible' : 'Excluir esta fuente'}
-          </button>
-        )}
-      </div>
-      {mode === 'observation' && (
+          {obligation && state.settings.obligationsVisible && (
+            <button
+              className="button primary"
+              onClick={() => setMode(mode === 'payment' ? null : 'payment')}
+            >
+              Registrar pago o evento
+            </button>
+          )}
+          {a.manual && (
+            <button
+              className="button secondary"
+              onClick={() =>
+                void execute({
+                  type: 'inclusion',
+                  accountId,
+                  include: inclusion?.include === false,
+                  effectiveDate: state.cutoff,
+                  reason:
+                    inclusion?.include === false
+                      ? 'Inclusión manual confirmada desde el detalle.'
+                      : 'Exclusión manual confirmada desde el detalle.',
+                })
+              }
+            >
+              {inclusion?.include === false ? 'Incluir fuente elegible' : 'Excluir esta fuente'}
+            </button>
+          )}
+        </div>
+      )}
+      {canEdit && mode === 'observation' && (
         <section className="edit-panel">
           <h3>Nueva observación ficticia</h3>
           <p>
@@ -478,7 +484,7 @@ export function SourceDetail({ accountId, onClose }: { accountId: string; onClos
           </Form>
         </section>
       )}
-      {mode === 'ownership' && (
+      {canEdit && mode === 'ownership' && (
         <section className="edit-panel">
           <h3>Propiedad económica del hogar</h3>
           <p>Tener acceso a la aplicación no significa ser dueño del dinero.</p>
@@ -520,7 +526,7 @@ export function SourceDetail({ accountId, onClose }: { accountId: string; onClos
           </Form>
         </section>
       )}
-      {mode === 'payment' && obligation && (
+      {canEdit && mode === 'payment' && obligation && (
         <section className="edit-panel">
           <h3>Registrar un evento de la obligación</h3>
           <Form

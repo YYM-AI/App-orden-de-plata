@@ -1,0 +1,2 @@
+-- Identities are created securely through the local Auth admin API by scripts/seed-local.ts.
+-- No passwords, real emails or provider secrets are committed.

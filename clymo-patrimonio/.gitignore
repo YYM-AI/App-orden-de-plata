@@ -7,3 +7,7 @@ playwright-report/
 coverage/
 .env*
 !.env.example
+.local/
+.env.local
+supabase/.temp/
+supabase/.branches/

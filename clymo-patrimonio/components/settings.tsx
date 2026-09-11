@@ -1,11 +1,17 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShieldCheck, RotateCcw, Users } from 'lucide-react';
 import { useDemo } from './demo-provider';
 import { Modal, Field } from './ui';
+import { SecuritySettings } from './security-settings';
 export function SettingsPage() {
-  const { state, execute, reset, busy } = useDemo();
+  const { state, execute, reset, busy, canEdit, userId } = useDemo();
   const [resetting, setResetting] = useState(false);
+  const [showObligations, setShowObligations] = useState(state.settings.obligationsVisible);
+  useEffect(
+    () => setShowObligations(state.settings.obligationsVisible),
+    [state.settings.obligationsVisible],
+  );
   return (
     <>
       <div className="page-heading">
@@ -27,21 +33,22 @@ export function SettingsPage() {
             </span>
             <div>
               <strong>{state.household.name}</strong>
-              <p>Administrador Demo · administrador</p>
+              <p>
+                {state.users.find((u) => u.id === userId)?.displayName} ·{' '}
+                {canEdit ? 'Propietario' : 'Ayudante · solo lectura'}
+              </p>
             </div>
           </div>
           <p>
-            Ayudante Demo · rol de lectura previsto en el modelo. No posee bienes por tener acceso.
-          </p>
-          <p className="inline-note">
-            No hay inicio de sesión ni invitaciones reales. El rol del ayudante es una referencia
-            sintética; no es un control de acceso de producción.
+            Las personas autorizadas pueden ver este hogar. Solo sus propietarios pueden
+            modificarlo, exportarlo o gestionar accesos.
           </p>
         </section>
         <section className="panel">
           <h2>Cómo quieres ver tus datos</h2>
           <Field label="Moneda de presentación en configuración">
             <select
+              disabled={!canEdit}
               value={state.settings.reportingCurrency}
               onChange={(e) =>
                 void execute({
@@ -54,22 +61,36 @@ export function SettingsPage() {
               <option value="USD">USD · Dólar</option>
             </select>
           </Field>
-          <p>
-            USD 1 = CLP 950. UF 1 = CLP 40.000. Valores ficticios al 4 de septiembre de 2026; no se
-            consultan servicios externos.
-          </p>
+          <p>Conversiones ficticias de este hogar; no se consultan servicios externos.</p>
+          {state.rates.map((rate) => (
+            <p key={rate.id}>
+              {rate.base} 1 = {rate.quote} {rate.rate} · {rate.source} · {rate.effectiveDate}
+            </p>
+          ))}
+          {state.ufValues.map((value) => (
+            <p key={value.id}>
+              UF 1 = CLP {value.clpValue} · {value.source} · {value.effectiveDate}
+            </p>
+          ))}
+          {!state.rates.length && !state.ufValues.length && (
+            <p>Sin tasas de conversión registradas.</p>
+          )}
           <label className="toggle-row" aria-label="Mostrar obligaciones personales">
             <input
               type="checkbox"
-              checked={state.settings.obligationsVisible}
-              onChange={(e) =>
-                void execute(
-                  { type: 'settings', obligationsVisible: e.target.checked },
-                  e.target.checked
+              disabled={!canEdit || busy}
+              checked={showObligations}
+              onChange={async (e) => {
+                const checked = e.target.checked;
+                setShowObligations(checked);
+                const saved = await execute(
+                  { type: 'settings', obligationsVisible: checked },
+                  checked
                     ? 'Obligaciones personales visibles.'
                     : 'Interfaz oculta. Los saldos y el historial se conservan en el patrimonio.',
-                )
-              }
+                );
+                if (!saved) setShowObligations(state.settings.obligationsVisible);
+              }}
             />
             <span>
               <strong>Mostrar obligaciones personales</strong>
@@ -146,26 +167,32 @@ export function SettingsPage() {
             financiera real.
           </p>
           <p>
-            Los registros se guardan en el almacenamiento local de este navegador. No se envían a
-            bancos, brokers ni servicios de análisis. Esto no es almacenamiento seguro de
-            producción.
+            Los registros se guardan en PostgreSQL con permisos por hogar. No se guardan balances en
+            localStorage ni se consultan bancos o brokers. Este staging sigue limitado a datos
+            ficticios.
           </p>
         </div>
       </section>
-      <section className="panel reset-panel">
-        <div>
-          <h2>Volver a empezar</h2>
-          <p>Restablece el hogar original y elimina los cambios de demostración guardados aquí.</p>
-        </div>
-        <button className="button secondary" onClick={() => setResetting(true)}>
-          <RotateCcw size={18} />
-          Restablecer datos demo
-        </button>
-      </section>
+      {canEdit && (
+        <section className="panel reset-panel">
+          <div>
+            <h2>Volver a empezar</h2>
+            <p>
+              Restablece el hogar original y elimina los cambios de demostración guardados en la
+              base de datos.
+            </p>
+          </div>
+          <button className="button secondary" onClick={() => setResetting(true)}>
+            <RotateCcw size={18} />
+            Restablecer datos demo
+          </button>
+        </section>
+      )}
+      <SecuritySettings />
       {resetting && (
         <Modal
           title="¿Restablecer la demostración?"
-          description="Se perderán las fuentes, observaciones, pagos y decisiones que agregaste en este navegador. El hogar volverá a sus cifras originales."
+          description="Se perderán las fuentes, observaciones, pagos y decisiones que agregaste en este hogar. El hogar volverá a sus cifras originales."
           onClose={() => setResetting(false)}
         >
           <div className="actions">

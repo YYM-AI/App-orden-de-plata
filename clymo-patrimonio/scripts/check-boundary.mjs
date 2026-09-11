@@ -21,6 +21,6 @@ async function check(dir) {
     }
   }
 }
-for (const folder of ['app', 'components', 'domain', 'data', 'persistence'])
+for (const folder of ['app', 'components', 'domain', 'data', 'persistence', 'server', 'database'])
   await check(resolve(folder));
 console.log('PASS: Patrimonio imports remain inside its independent application boundary.');

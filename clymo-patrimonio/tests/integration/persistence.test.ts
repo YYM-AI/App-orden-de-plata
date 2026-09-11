@@ -3,7 +3,7 @@ import {
   LocalPrototypeRepository,
   MemoryPrototypeRepository,
   STORAGE_KEY,
-} from '../../persistence/repository';
+} from '../legacy/prototype-repository';
 import { createFixture } from '../../data/fixture';
 import { calculateSnapshot } from '../../domain/engine';
 import { command, manual } from '../helpers';

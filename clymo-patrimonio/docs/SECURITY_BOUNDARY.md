@@ -1,0 +1,15 @@
+# Security boundary
+
+**Synthetic staging only. This milestone does not approve real financial information.** No banking credentials, real statements, real balances, OCR, live market/FX integrations, uploads, payments, trading, financial advice, public registration or service worker are implemented.
+
+The financial engine is pure. Authenticated browser requests go through a same-origin Next API. Official server-side Supabase SSR clients manage HTTPOnly/SameSite cookies, Secure on HTTPS. The service-role key is server-only and used only to delete the independently validated caller's Auth identity. It is never intentionally exposed as a public env variable, bundled value, response, screenshot or documentation value. Local tooling captures CLI status into ignored mode-0600 files; normal CLI output can contain keys, so the database wrapper suppresses it. Do not print raw status or ignored local files into shared logs.
+
+Public registration is disabled and a separate profile allowlist is enforced. Every financial request checks live identity and membership; RLS checks these independently, including session removal and revocation. Helpers cannot invoke financial writes by bypassing the UI. Tenant keys participate in foreign keys. History cannot be rewritten. Guarded deletions/reset are exceptions with explicit owner checks, pinned search paths and transactional boundaries.
+
+Authenticated pages/APIs have no-store; robots denies indexing. Responses set nosniff, frame denial, no-referrer, limited Permissions-Policy and HTTPS-only HSTS when deployed securely. CSP uses request nonces/strict-dynamic, no objects/frames, same-origin connections and forms. Development alone enables unsafe-eval for Next tooling. Inline styles remain permitted for the existing React/UI styling; this is an explicit CSP limitation, not a claim of an all-inline-free policy.
+
+The app records no request bodies, financial payloads, credentials or tokens in general logs. Browser traces are disabled during authentication E2E. Test identities and amounts are synthetic; screenshots contain no passwords or keys. Export errors are sanitized and SQL/provider exception details are not sent to ordinary users.
+
+Limitations before real data: independent security review; validated backup/restore and retention operations; staging-provider access configuration; encryption/key-rotation/incident controls; privacy/legal/regional processing review; owner-transfer support and administrative recovery; stable distributed rate limiting and session lifecycle review; real-world financial-policy and target-user validation. Free local storage is not a hardened production environment. The process-level login limiter is best effort; Supabase also applies its own rate limits.
+
+During local setup, one raw Supabase CLI diagnostic included default/local development keys. The credential-bearing diagnostic files were then cleared, and the committed wrapper suppresses CLI credential output. No hosted credentials were provisioned or printed. Local development keys must never be reused for hosted staging.

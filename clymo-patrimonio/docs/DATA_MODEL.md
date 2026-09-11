@@ -1,30 +1,30 @@
-# Data model
+# Database model
 
-All financial amounts, quantities, percentages, prices, FX and UF values are decimal strings; schema validation rejects JavaScript numbers, negative amounts, NaN, Infinity, exponents, ambiguous grouping, malformed currencies/dates and duplicate entity IDs. Asset/liability direction is a separate typed field. Financial state has a schema version, revision and cutoff.
+Versioned migrations are the source of schema truth. `supabase/migrations/` contains:
 
-| Entity                           | Meaning                                                                                                                                         |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Household                        | One fictional economic workspace, explicitly synthetic                                                                                          |
-| User / Membership                | Administrative or read-only helper reference; no real authentication                                                                            |
-| FinancialParty                   | Economic owner or obligation counterparty, independent of login                                                                                 |
-| OwnershipDecision                | Household percentage, party, confirmation/dispute status, actor, reason and dates                                                               |
-| Institution                      | Illustrative institution identity, country and synthetic flag                                                                                   |
-| LogicalAccount                   | One economic source with currency, direction, category and valuation basis                                                                      |
-| SourceBinding                    | Manual or fictitious statement provenance, logical target and selection priority                                                                |
-| RawObservation                   | Normalized immutable evidence metadata; no document/payload intake                                                                              |
-| BalanceObservation               | Balance, broker cash, informational container total or credit limit                                                                             |
-| Instrument / PositionObservation | Fictional instrument, resolved identity and dated quantity                                                                                      |
-| PriceObservation                 | Approved or unapproved fictional price with currency and dates                                                                                  |
-| ExchangeRate / UFValue           | Approved fictional rate or indexed unit (CLF), original direction, effective and record dates                                                   |
-| ManualAsset / Liability          | Supplemental identity for manually declared assets and principal-only liabilities                                                               |
-| PersonalObligation               | Receivable or payable with fictional counterparty and original currency                                                                         |
-| ObligationEvent                  | Initial principal, repayment, adjustment, forgiveness, write-off, settlement, dispute; optional cash-observation link                           |
-| InclusionDecision                | Explicit included/excluded preference, subject to mandatory eligibility checks                                                                  |
-| DuplicateCandidate               | Unbound secondary statement, proposed logical target, concrete identity evidence                                                                |
-| ReviewTask / ResolutionDecision  | Review problem and append-only acknowledgment, reopening, binding or reversal                                                                   |
-| ValuationComponent               | Selected originals, reporting amount, ownership, status, reasons, source/observation/decision IDs, dates, conversion path and calculation steps |
-| NetWorthSnapshot                 | Dated deterministic components, totals, coverage and oldest included source date                                                                |
+1. `202609070001_foundation.sql`: UUID keys, profiles/allowlist, households/memberships, normalized financial evidence, numeric columns, scoped foreign keys, indexes, RLS and initial grants.
+2. `202609070002_operations.sql`: append-only guards, relational/economic checks, narrow owner operations, consistent reads, valuation history, safe membership administration and invoker view.
+3. `202609070003_account_lifecycle.sql`: recoverable account-deletion request and provider-completion receipt, consistent read snapshot.
+4. `202609070004_export.sql`: owner-only complete household export, with numeric history serialized as strings.
+5. `202609070005_actor_integrity.sql`: decision/event authors must match the authenticated UUID at append time.
+6. `202609080006_session_integrity.sql`: retained tokens lose database access when their Supabase session is removed.
+7. `202609080007_membership_idempotence.sql`: repeated identical authorization/seed operations do not create duplicate membership audit events.
 
-Global entity IDs are unique across arrays. Household-owned records are checked against the one demo household; foreign references are validated. These model checks are not production tenant isolation. The optional helper has no economic share and command-level viewer writes fail, but users can inspect/edit their local browser storage.
+## Tables
 
-The broker has one logical account, a primary source, cash and ETF position, an informational total, and an unbound duplicate statement with another informational total. Binding/unbinding is derived from resolution history. No destructive merge or second economic account is created.
+- Identity/access: `profiles`, `households`, `household_memberships`.
+- Financial identity: `financial_parties`, `institutions`, `instruments`, `logical_accounts`, `account_source_bindings`.
+- Evidence: `balance_observations`, `position_observations`, `price_observations`, `exchange_rates`, `uf_values`.
+- Decisions: `ownership_decisions`, `inclusion_decisions`, `resolution_decisions`.
+- Economic metadata/journal: `manual_assets`, `liabilities`, `obligations`, `obligation_events`.
+- Review: `duplicate_candidates`, `review_tasks`.
+- Derived history: `valuation_runs`, `valuation_components`, `net_worth_snapshots`.
+- Minimal tracking: `audit_events`, `command_receipts`; unexposed `private.deletion_receipts`.
+
+All financial tables carry `household_id`. Entity keys are UUIDv5(household UUID, scoped domain key); composite foreign keys include household ID. Known account IDs cannot cross a household boundary. A source binding has a single nullable logical-account target; immutable duplicate resolution decisions use the existing account. Unique candidate-per-binding and component-per-run/account constraints prevent duplicate economic entries in the persisted valuation. The engine enforces statement-total versus child-component valuation, so both cannot contribute.
+
+Money/event numeric columns have eight fractional places; quantities/prices twelve; percentages/FX/UF sixteen. Input constraints reject excess precision rather than silently rounding these evidence values. UUID IDs, UTC `timestamptz` effective/recorded times, matching original payload timestamps and nonnegative/positive/range constraints are enforced. PostgreSQL has no floating-point financial columns. Original values remain decimal strings in API/JSON export.
+
+Balances and decisions are appended. Obligation outstanding values are derived from their journal, with one initial capital event, nonnegative outstanding, ordered dates, consistent currency and bounded repayment checks. Membership roles are `owner`/`helper`; the unchanged domain engine's internal `admin`/`viewer` mapping is an adapter detail. Application membership confers no financial ownership.
+
+Profiles can be read only by their own user. Household memberships expose only the display name/role needed for that household. Deleted authors remain detached UUID references labeled “Participante anterior” in historical financial evidence; no provider credentials or emails are stored there.
