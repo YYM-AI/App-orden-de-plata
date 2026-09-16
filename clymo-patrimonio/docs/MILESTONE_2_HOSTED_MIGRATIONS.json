@@ -1,0 +1,47 @@
+{
+  "projectRef": "sfdazqyophgjehwlkhla",
+  "checkedAt": "2026-09-16T00:00:40.373Z",
+  "tlsVerified": true,
+  "migrations": [
+    {
+      "file": "202609070001_foundation.sql",
+      "sha256": "f2ab311a1bd899d0d6eeb7690cdfb21cc5f58b37e3b8ec74bfc1680c9aadf2f6",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609070002_operations.sql",
+      "sha256": "a97396fb972dc60dd3b94017708dabe00964b6b16cd4c74d161e12014eaec59d",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609070003_account_lifecycle.sql",
+      "sha256": "26dee7dc40b064611bad7bd816ddc47a3a33fc1440911a07fbe735d8230321c6",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609070004_export.sql",
+      "sha256": "84d46cabaf08c2f29fca729b410d447d6155cebc966ba2def85bcecf0162bfb4",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609070005_actor_integrity.sql",
+      "sha256": "8f7926ef6f525909f9507edb9cb82d52e4adf52f297d818d33973fb09f619fc1",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609080006_session_integrity.sql",
+      "sha256": "2d8363a8b1aac76326d127ff12ebd891d7eb7221bf97c3c1ef885a1eed2d468f",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609080007_membership_idempotence.sql",
+      "sha256": "e23b213e0250af1e0f3334914803c0644aee177129cd705bb5c5394cc045b03a",
+      "result": "already applied; source verified"
+    },
+    {
+      "file": "202609150008_revision_conflict.sql",
+      "sha256": "00d08f49107b6ad19587e7d45b7671516ff98a31292e86de516748533004e2c3",
+      "result": "applied"
+    }
+  ]
+}

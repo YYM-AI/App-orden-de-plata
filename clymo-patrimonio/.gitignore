@@ -7,3 +7,13 @@ playwright-report/
 coverage/
 .env*
 !.env.example
+.local/
+.env.local
+supabase/.temp/
+supabase/.branches/
+
+# Private staging build artifacts
+dist/
+.vinext/
+.wrangler/
+.dev.vars*

@@ -1,0 +1,112 @@
+{
+  "at": "2026-09-10T19:46:53.251Z",
+  "disposableHousehold": "a2aad156-9140-409a-827e-079ed3a20671",
+  "householdRows": 0,
+  "relatedTablesChecked": 26,
+  "counts": [
+    {
+      "table": "account_inventory",
+      "remaining": 0
+    },
+    {
+      "table": "account_source_bindings",
+      "remaining": 0
+    },
+    {
+      "table": "audit_events",
+      "remaining": 0
+    },
+    {
+      "table": "balance_observations",
+      "remaining": 0
+    },
+    {
+      "table": "command_receipts",
+      "remaining": 0
+    },
+    {
+      "table": "duplicate_candidates",
+      "remaining": 0
+    },
+    {
+      "table": "exchange_rates",
+      "remaining": 0
+    },
+    {
+      "table": "financial_parties",
+      "remaining": 0
+    },
+    {
+      "table": "household_memberships",
+      "remaining": 0
+    },
+    {
+      "table": "inclusion_decisions",
+      "remaining": 0
+    },
+    {
+      "table": "institutions",
+      "remaining": 0
+    },
+    {
+      "table": "instruments",
+      "remaining": 0
+    },
+    {
+      "table": "liabilities",
+      "remaining": 0
+    },
+    {
+      "table": "logical_accounts",
+      "remaining": 0
+    },
+    {
+      "table": "manual_assets",
+      "remaining": 0
+    },
+    {
+      "table": "net_worth_snapshots",
+      "remaining": 0
+    },
+    {
+      "table": "obligation_events",
+      "remaining": 0
+    },
+    {
+      "table": "obligations",
+      "remaining": 0
+    },
+    {
+      "table": "ownership_decisions",
+      "remaining": 0
+    },
+    {
+      "table": "position_observations",
+      "remaining": 0
+    },
+    {
+      "table": "price_observations",
+      "remaining": 0
+    },
+    {
+      "table": "resolution_decisions",
+      "remaining": 0
+    },
+    {
+      "table": "review_tasks",
+      "remaining": 0
+    },
+    {
+      "table": "uf_values",
+      "remaining": 0
+    },
+    {
+      "table": "valuation_components",
+      "remaining": 0
+    },
+    {
+      "table": "valuation_runs",
+      "remaining": 0
+    }
+  ]
+}

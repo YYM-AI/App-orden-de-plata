@@ -28,6 +28,7 @@ export function Summary() {
     liquidCash: 'Efectivo disponible',
   };
   const pending = reviews.filter((r) => r.status === 'pending').length;
+  const duplicateReview = reviews.find((r) => r.kind === 'duplicate');
   const groups = [
     { name: 'Bancos y depósitos', categories: ['bank', 'deposit'], Icon: Landmark },
     { name: 'Inversiones', categories: ['investment'], Icon: ArrowUpRight },
@@ -85,7 +86,7 @@ export function Summary() {
             <span>
               {s.includedCount} de {state.accounts.length} fuentes económicas incluidas
             </span>
-            <Link href="/revision">
+            <Link href={'/revision?hogar=' + state.household.id}>
               Ver exclusiones <ArrowUpRight size={17} />
             </Link>
           </div>
@@ -129,7 +130,7 @@ export function Summary() {
         <section className="panel">
           <div className="section-title">
             <h2>Dónde está tu patrimonio</h2>
-            <Link href="/fuentes">
+            <Link href={'/fuentes?hogar=' + state.household.id}>
               Ver fuentes <ArrowUpRight size={17} />
             </Link>
           </div>
@@ -164,14 +165,16 @@ export function Summary() {
                   .join(' · ') || 'Todas las fuentes declaradas son elegibles.'}
               </span>
             </li>
-            <li>
-              <strong>
-                {reviews.find((r) => r.kind === 'duplicate')?.status === 'resolved'
-                  ? 'Cartola adicional vinculada'
-                  : 'Una cartola adicional en revisión'}
-              </strong>
-              <span>No agrega otra inversión al patrimonio.</span>
-            </li>
+            {duplicateReview && (
+              <li>
+                <strong>
+                  {duplicateReview.status === 'resolved'
+                    ? 'Cartola adicional vinculada'
+                    : 'Una cartola adicional en revisión'}
+                </strong>
+                <span>No agrega otra inversión al patrimonio.</span>
+              </li>
+            )}
             <li>
               <strong>Fecha incluida más antigua</strong>
               <span>
@@ -179,7 +182,7 @@ export function Summary() {
               </span>
             </li>
           </ul>
-          <Link className="button secondary" href="/revision">
+          <Link className="button secondary" href={'/revision?hogar=' + state.household.id}>
             Ir a revisión <ArrowRight size={18} />
           </Link>
         </section>
@@ -227,8 +230,9 @@ export function Summary() {
             ))}
           </div>
           <p className="inline-note">
-            {s.excludedCount} fuentes permanecen fuera. La conversión a USD usa la tasa sintética
-            CLP 950 por USD. Las cifras se calculan desde sus valores originales.
+            {s.excludedCount} fuentes permanecen fuera. Las cifras se calculan desde sus valores
+            originales con las tasas ficticias aprobadas de este hogar. Abre una fuente para ver su
+            conversión y origen.
           </p>
           <details>
             <summary>Precisión y fecha del cálculo</summary>

@@ -1,27 +1,18 @@
 # Test strategy
 
-All tests use fictional values and local processes. No financial institution, live quote, real document or external account is contacted.
+All tests use synthetic data. Database tests require a real local Supabase/PostgreSQL stack; they refuse non-loopback URLs. Run database and E2E suites sequentially to avoid fixture interference.
 
-## Automated layers
+- `npm run test:unit`: pure financial rules, validation, canonical/North/empty fixtures, exact decimal arithmetic, CSV formula escaping and format metadata.
+- `npm run test:integration`: preserved M1 command and repository-interface regression cases. Legacy local/memory repositories are test-only.
+- `npm run test:database`: real SQL/RLS resource matrix, PostgreSQL catalog/grants/search paths, constraints, exact numeric storage, transactional deletion, session/membership revocation, every public operation across actor types, actual Auth closed registration, and PostgREST repository persistence/export tests.
+- `npm run test:e2e`: production Chromium tests; preserved 23 M1 scenarios plus authenticated owner/helper flows, unauthorized URLs, cookie restoration, legacy discard, direct write/export denial, cross-browser persistence, revocation, household switch/deletion, real Auth-account deletion, form/dialog accessibility and 320/390/768/1440 layouts. Traces are disabled so authentication bodies are not captured.
 
-- `npm run format:check`: source/document formatting via oxfmt.
-- `npm run lint`: oxlint with TypeScript, React and accessibility rules, plus the independent-application import boundary check.
-- `npm run typecheck`: strict TypeScript, including test files.
-- `npm run test:unit`: deterministic engine, fixture totals, ownership, FX/UF, stale/future data, container/component exclusivity, missing quantity/price, original-value preservation, validation and formatting.
-- `npm run test:integration`: commands through recalculation and replaceable persistence, append-only history, idempotency, partial/linked repayments and conservation, payable events, review binding reversal, safe hiding, explicit inclusion and reset.
-- `npm run build`: optimized Next production build.
-- `npm run test:e2e`: Playwright Chromium against a real production server started by the test harness; 23 user journeys/layout/security-boundary scenarios. Includes the four destinations, all headline calculations, provenance, manual asset and liability creation, linked partial repayment, duplicate reversal, currencies, refresh/reset, ownership, new observations, obligation visibility, filtering and validation errors.
+The CRUD matrix covers 26 household resource types × 3 households × 8 actors × 4 verbs. It creates sentinel rows in every target table inside a transaction, including normally empty Household C. Each case uses the real database role and actual locally issued claims; there are no mocked RLS decisions. Unrelated writes must fail by privilege/RLS or affect zero rows. Owner evidence inserts pass or reach an expected domain uniqueness constraint; guarded application commands prove positive mutation paths. All matrix writes are rolled back.
 
-The E2E suite runs axe WCAG A/AA tags across all four pages and the manual entry dialog. It checks keyboard focus containment and Escape, widths 320/390/768/1440, 200% root text enlargement, reduced motion, page/console errors and absence of external financial requests. Automated checks do not establish full WCAG conformance or real-user usability.
+The real PostgREST tests separately demonstrate API JWT verification, persisted owner writes, helper denial and live revocation with an already issued token. SQL lifecycle tests validate deletion cascades, orphan protection and historical evidence after an owner's departure. E2E uses the official Auth flow through the Next API and actual database state.
 
-The first E2E run found inaccessible locator names because help text was part of wrapped labels, and a dialog Tab cycle could leave document focus. The implementation now uses explicit label/control relationships with separately described help and a modal focus loop. Escape focus restoration was also corrected. The final full run passed 23/23; exact final counts and verification evidence are recorded in `IMPLEMENTATION_STATUS.md` and `MANUAL_VERIFICATION.md`.
+A fresh local database reset, migration application, no-op reapplication and repeated seed must be verified and recorded. A successful build/test suite does not replace manual browser checks. Manual local and private hosted evidence belong in separate sections of implementation status. Failed intermediate runs remain documented; final counts may only be claimed after running the complete applicable suite.
 
-## Manual verification
+For production verification: `npm ci --no-audit --no-fund`, format, format:check, lint (including import boundary), typecheck, unit/integration/database tests, production build, E2E, `npm audit --json`. Check the client bundle for actual configured service-key values without printing them; check unauthenticated HTML and API results for fixture values. Record exact commands/counts/build SHA. No independent penetration test or full accessibility certification is implied.
 
-Separately open the production build in the Codex browser and interact with the visible controls. Verify canonical totals, all four sections, calculations, source details, manual asset and liability creation, payment, duplicate review, CLP/USD, refresh persistence, reset, desktop/mobile layout and browser console. Automated test success is not recorded as manual verification.
-
-Screenshots in `docs/screenshots/` are synthetic local-app evidence. The automated viewport screenshots come from Playwright; manual browser captures are named separately. They are not real household data or a claim of financial production readiness.
-
-## Coverage limits
-
-Chromium is the automated browser target. No Safari/Firefox/device-lab certification, screen-reader user study, real-world market calendar validation, PostgreSQL/RLS test, external security assessment, OCR/parser certification, bank connector test or target-user ten-second comprehension study is claimed.
+The local production browser suite uses one worker, zero retries, a 60-second test budget and 15-second state assertions to accommodate real Auth/database calls on the constrained VM. It uses condition-based waits, not sleeps. Household creation/navigation/deletion checks retain the selected household across routes and refresh; disposable test data are cleaned up in `finally`. `db:check` validates local Auth, PostgreSQL, migration availability and the synthetic identity file before the browser server starts.

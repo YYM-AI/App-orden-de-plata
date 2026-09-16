@@ -5,7 +5,7 @@ import { useDemo } from './demo-provider';
 import { SourceDetail } from './sources';
 import { dateLabel } from '@/domain/format';
 export function Reviews() {
-  const { state, reviews, execute, busy } = useDemo();
+  const { state, reviews, execute, busy, canEdit } = useDemo();
   const [source, setSource] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const pending = reviews.filter((r) => r.status === 'pending').length;
@@ -109,7 +109,7 @@ export function Reviews() {
                   {r.kind === 'duplicate' ? (
                     <button
                       className="button primary"
-                      disabled={busy}
+                      disabled={busy || !canEdit}
                       onClick={() => void decide(r.status === 'resolved' ? 'undo_binding' : 'bind')}
                     >
                       {r.status === 'resolved'
@@ -120,7 +120,7 @@ export function Reviews() {
                     r.status !== 'resolved' && (
                       <button
                         className="button secondary"
-                        disabled={busy}
+                        disabled={busy || !canEdit}
                         onClick={() =>
                           void decide(r.status === 'acknowledged' ? 'reopen' : 'acknowledge')
                         }

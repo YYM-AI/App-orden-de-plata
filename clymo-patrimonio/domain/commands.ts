@@ -322,6 +322,17 @@ export function applyCommand(input: DemoState, raw: Command, context: CommandCon
     case 'review': {
       const task = reviewQueue(s).find((t) => t.id === command.reviewId);
       if (!task) throw Error('No encontramos la revisión.');
+      // A dynamically detected review becomes durable evidence before its first decision.
+      if (!s.reviewTasks.some((t) => t.id === task.id))
+        s.reviewTasks.push({
+          id: task.id,
+          householdId: task.householdId,
+          accountId: task.accountId,
+          kind: task.kind,
+          title: task.title,
+          detail: task.detail,
+          candidateId: task.candidateId,
+        });
       if (['bind', 'undo_binding'].includes(command.action) && task.kind !== 'duplicate')
         throw Error('Esta revisión no corresponde a un duplicado.');
       s.resolutions.push({
