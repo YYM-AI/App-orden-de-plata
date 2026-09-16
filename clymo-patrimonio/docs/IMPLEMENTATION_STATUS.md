@@ -1,6 +1,6 @@
 # Milestone 2 implementation status
 
-**LOCAL IMPLEMENTATION AND VERIFICATION COMPLETE — private hosted staging is not provisioned or verified. Milestone 2 is NOT complete.** Evidence was gathered on 8–11 September 2026. M1's completed evidence remains in [MILESTONE_1_VERIFICATION.md](MILESTONE_1_VERIFICATION.md).
+**HOSTED DATABASE PROVISIONED; PRIVATE APPLICATION DEPLOYMENT AND VERIFICATION PENDING. Milestone 2 is NOT complete.** Current hosted progress and known failures are recorded in [MILESTONE_2_HOSTED_VERIFICATION.md](MILESTONE_2_HOSTED_VERIFICATION.md). The completed local baseline below was gathered on 8–11 September 2026; its counts are historical, not hosted completion evidence. M1's completed evidence remains in [MILESTONE_1_VERIFICATION.md](MILESTONE_1_VERIFICATION.md).
 
 ## Implemented
 
@@ -18,9 +18,9 @@ All M1 source, ownership, freshness, inclusion/exclusion, missing-rate, property
 | B — Familia Norte Demo |  2,000,000 |         100,000 |     1,900,000 |          2,000,000 |
 | C — Hogar Vacío Demo   |          0 |               0 |             0 |                  0 |
 
-Seven local Auth identities use only generated `.test` addresses and ignored random credentials. A's USD 9,200 brokerage uses its synthetic CLP 950 rate; B has its own USD account and CLP 1,000 rate. A's Santander account contributes 50%. No real financial information or hosted credentials were used.
+Seven local Auth identities use only generated `.test` addresses and ignored random credentials. A's USD 9,200 brokerage uses its synthetic CLP 950 rate; B has its own USD account and CLP 1,000 rate. A's Santander account contributes 50%. No real financial information was used. Separate ignored hosted credentials were generated during the subsequent staging phase.
 
-## Commands and final results
+## Historical local baseline commands and results (8–11 September)
 
 | Command                                                          | Result                                                                                                                                   |
 | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -62,9 +62,9 @@ Every M2 source/documentation change is confined to `clymo-patrimonio/`. All **7
 
 ## Incomplete: private hosted staging
 
-On 10 September 2026 the official Supabase dashboard required sign-in. No authenticated hosted project is available to this task. No stable private HTTPS application URL, hosted database configuration, deployed commit or hosted browser evidence exists. No resource with billing or paid service was created. Local screenshots do not count as deployed verification.
+The dedicated Free Supabase project now exists, contains three synthetic demonstration households and has eight migrations applied with verified TLS. Registration is closed and the explicit allowlist is configured. Hosted RLS passed 2,539 assertions; a subsequent 289/290 repository/constraint/function run exposed a stale-revision retry issue, repaired in migration 008 with the full rerun pending. See [current hosted evidence](MILESTONE_2_HOSTED_VERIFICATION.md).
 
-The next external step is secure Supabase dashboard sign-in by the user. After that, continue the same milestone with free-project availability checks, dedicated synthetic provisioning, migrations, closed signup/allowlist, secure server configuration, compatible private hosting and manual hosted owner/helper/anonymous/unrelated/mobile verification. Do not request passwords, tokens, service keys or recovery codes in chat. See [PRIVATE_STAGING.md](PRIVATE_STAGING.md).
+The owner-only Sites project is registered and runtime secrets are configured, but the application has not been deployed or manually verified there. No public release or paid resource has been activated. Remaining work is the exact-build private deployment, hosted browser and permission checks, screenshots, final evidence and branch delivery. Local screenshots do not count as deployed verification. See [PRIVATE_STAGING.md](PRIVATE_STAGING.md).
 
 ## Deferred and blocked before real data
 

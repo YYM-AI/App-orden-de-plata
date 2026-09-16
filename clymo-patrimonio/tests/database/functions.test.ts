@@ -142,7 +142,7 @@ for (const [label, h] of Object.entries(households))
               } catch (e) {
                 error = e;
               }
-              expect(error).toMatchObject({ code: '40001' });
+              expect(error).toMatchObject({ code: 'PT409' });
             } else await execute();
           }),
         );

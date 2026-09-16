@@ -24,7 +24,13 @@
     "db:configure": "node scripts/runtime-config.mjs",
     "db:seed": "tsx scripts/seed-local.ts",
     "test:database": "vitest run tests/database",
-    "db:verify-seed": "node scripts/verify-seed.mjs"
+    "db:verify-seed": "node scripts/verify-seed.mjs",
+    "build:staging": "node scripts/build-staging.mjs",
+    "preview:staging": "node scripts/preview-staging.mjs",
+    "db:migrate:hosted": "tsx scripts/migrate-hosted.ts",
+    "db:seed:hosted": "tsx scripts/seed-hosted.ts",
+    "test:database:hosted": "tsx scripts/verify-hosted-rls.ts && CLYMO_DB_TEST_TARGET=hosted-synthetic vitest run tests/database/constraints.test.ts tests/database/functions.test.ts tests/database/repository.test.ts",
+    "test:e2e:worker": "playwright test --config playwright.worker.config.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
@@ -32,24 +38,30 @@
     "decimal.js": "10.6.0",
     "lucide-react": "1.31.0",
     "next": "16.3.4",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "server-only": "^0.0.1",
     "uuid": "^14.0.2",
     "zod": "^4.0.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",
+    "@cloudflare/vite-plugin": "1.54.9",
     "@playwright/test": "1.63.0",
     "@types/node": "22.19.19",
     "@types/pg": "^8.23.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.1.1",
+    "@vitejs/plugin-rsc": "0.5.34",
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
     "pg": "^8.23.0",
+    "react-server-dom-webpack": "19.2.8",
     "tsx": "^4.23.13",
     "typescript": "5.9.3",
+    "vinext": "1.0.0-beta.9",
+    "vite": "8.3.0",
     "vitest": "5.0.0"
   },
   "engines": {

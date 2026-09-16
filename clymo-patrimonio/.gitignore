@@ -11,3 +11,9 @@ coverage/
 .env.local
 supabase/.temp/
 supabase/.branches/
+
+# Private staging build artifacts
+dist/
+.vinext/
+.wrangler/
+.dev.vars*

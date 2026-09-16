@@ -6,7 +6,7 @@ import type { PrototypeRepository } from './repository';
 export class DatabaseError extends Error {
   constructor(public code: string) {
     super(
-      code === '40001'
+      code === 'PT409' || code === '40001'
         ? 'Otra sesión cambió el hogar. Recarga antes de guardar.'
         : 'Operación de base de datos no autorizada o inválida.',
     );

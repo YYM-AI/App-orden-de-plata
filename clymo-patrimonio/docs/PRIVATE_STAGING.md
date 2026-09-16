@@ -1,6 +1,6 @@
 # Private staging
 
-**Not yet provisioned or verified. Do not call M2 complete or publish an open public financial application.** Remote provisioning remains a separate requirement. On 9 September and again on 10 September 2026 the official Supabase dashboard redirected to sign-in, so no authenticated hosted project is available to this task. No hosted project, deployment or billing was created.
+**Dedicated Free database configured; private application deployment and hosted browser verification remain pending. Do not call M2 complete.**
 
 The required hosted configuration is a free Supabase project, closed registration, an explicit profile allowlist and a free HTTPS application host. Use provider-level owner restriction where available without billing, plus application authentication in all cases. A hidden/unlisted URL or robots.txt is not an access-control mechanism.
 
@@ -24,6 +24,8 @@ Rollback: disable access to a bad staging version and deploy the previously veri
 
 Resource teardown: revoke staging access, remove its deployment, securely remove that dedicated synthetic Supabase project and configured secrets through the provider, and verify they are absent. Check names/IDs before deletion. This task has not authorized removal of unrelated projects or resources.
 
-## Current secure handoff
+## Current checkpoint
 
-The next external step is for the user to sign in through the official Supabase dashboard in the opened browser tab. No password, token or key should be sent through chat. After that secure sign-in, continue this same milestone: inspect free-tier availability, provision a dedicated synthetic project without billing, apply the versioned migrations, configure closed signup/allowlist and server secrets securely, deploy the tested branch behind access controls, and perform the required hosted browser verification. The local build is not a substitute for that evidence.
+Supabase sign-in and dedicated Free project provisioning are complete. See [hosted verification](MILESTONE_2_HOSTED_VERIFICATION.md) for current configuration, migrations, known failures and pending deployment. No further user login is currently required. Continue testing and the owner-only deployment autonomously; ask for a secure browser sign-in only if the provider actually requires one.
+
+Local Worker preview after `npm run build:staging`: run `npm run preview:staging`, then open `http://127.0.0.1:3101/login`. This command requires the isolated local Supabase stack and uses ignored preview bindings; it cannot target the hosted database. Run its automated browser checks with `npm run test:e2e:worker`. The normal Next.js local workflow remains on port 3100.

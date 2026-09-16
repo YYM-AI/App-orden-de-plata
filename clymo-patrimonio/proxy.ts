@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 export async function proxy(request: NextRequest) {
+  // Keep bootstrap assets public even on runtimes that do not apply Next's matcher.
+  // Financial pages and every API still perform their own server authorization.
+  const path = request.nextUrl.pathname;
+  if (path.startsWith('/_next/static/') || path === '/icon.svg' || path === '/favicon.ico')
+    return NextResponse.next();
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const dev = process.env.NODE_ENV === 'development';
   const https = process.env.APP_ORIGIN?.startsWith('https://');

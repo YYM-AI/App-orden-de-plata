@@ -1,0 +1,12 @@
+{
+  "projectRef": "sfdazqyophgjehwlkhla",
+  "checkedAt": "2026-09-16T00:05:14.431Z",
+  "passed": 2539,
+  "failed": 0,
+  "crudChecks": 2496,
+  "resources": 26,
+  "households": 3,
+  "actors": 8,
+  "tlsVerified": true,
+  "transactionRolledBack": true
+}

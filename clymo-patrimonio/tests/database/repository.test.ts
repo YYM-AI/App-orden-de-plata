@@ -110,7 +110,7 @@ it('concurrent revisions and duplicate command receipts prevent lost or repeated
   expect((await repo.load())!.revision).toBe(current.revision + 1);
   await expect(
     new SupabaseRepository(db, households.A, randomUUID()).save(next, current.revision),
-  ).rejects.toMatchObject({ code: '40001' });
+  ).rejects.toMatchObject({ code: 'PT409' });
 });
 it('helper sees the same balances but cannot save or reset', async () => {
   const r = new SupabaseRepository(helper, households.A);
@@ -183,17 +183,23 @@ it('persists dynamically detected review tasks before their resolution foreign k
   expect(state.reviewTasks.some((t) => t.id === 'auto-checking')).toBe(true);
   expect(state.resolutions.at(-1)?.reviewId).toBe('auto-checking');
 });
-it('real PostgREST rejects an expired signed JWT without returning financial data', async () => {
-  const { expiredSession } = await import('../support/expired-session');
-  const expired = expiredSession(accounts.ownerA.id);
-  const r = await fetch(process.env.SUPABASE_URL + '/rest/v1/logical_accounts?select=id', {
-    headers: {
-      apikey: process.env.SUPABASE_ANON_KEY!,
-      Authorization: 'Bearer ' + expired.access_token,
-    },
-  });
-  expect(r.status).toBe(401);
-  const body = await r.json();
-  expect(body.message).toMatch(/expired/i);
-  expect(JSON.stringify(body)).not.toContain(households.A);
-});
+it(
+  process.env.CLYMO_DB_TEST_TARGET === 'hosted-synthetic'
+    ? 'hosted PostgREST rejects a JWT signed with the unrelated local test key'
+    : 'real PostgREST rejects an expired signed JWT without returning financial data',
+  async () => {
+    const { expiredSession } = await import('../support/expired-session');
+    const expired = expiredSession(accounts.ownerA.id);
+    const r = await fetch(process.env.SUPABASE_URL + '/rest/v1/logical_accounts?select=id', {
+      headers: {
+        apikey: process.env.SUPABASE_ANON_KEY!,
+        Authorization: 'Bearer ' + expired.access_token,
+      },
+    });
+    expect(r.status).toBe(401);
+    const body = await r.json();
+    if (process.env.CLYMO_DB_TEST_TARGET === 'hosted-synthetic') expect(body.code).toBe('PGRST301');
+    else expect(body.message).toMatch(/expired/i);
+    expect(JSON.stringify(body)).not.toContain(households.A);
+  },
+);

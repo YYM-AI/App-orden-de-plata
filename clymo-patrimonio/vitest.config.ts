@@ -11,6 +11,6 @@ export default defineConfig({
     environment: 'node',
     fileParallelism: false,
     hookTimeout: 120000,
-    testTimeout: 20000,
+    testTimeout: process.env.CLYMO_DB_TEST_TARGET === 'hosted-synthetic' ? 60000 : 20000,
   },
 });

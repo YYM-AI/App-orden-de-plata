@@ -3,7 +3,8 @@ import { readFileSync } from 'node:fs';
 export const A = '11111111-1111-4111-8111-111111111111',
   B = '22222222-2222-4222-8222-222222222222',
   C = '33333333-3333-4333-8333-333333333333';
-export const origin = 'http://127.0.0.1:3100';
+export const origin =
+  process.env.CLYMO_E2E_WORKER === '1' ? 'http://127.0.0.1:3101' : 'http://127.0.0.1:3100';
 export const testAccounts: Record<string, { id: string; email: string; password: string }> =
   JSON.parse(readFileSync('.local/test-accounts.json', 'utf8'));
 const cookies = new Map<string, Awaited<ReturnType<BrowserContext['cookies']>>>();

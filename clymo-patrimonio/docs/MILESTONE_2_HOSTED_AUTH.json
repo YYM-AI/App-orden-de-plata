@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-16T00:06:27.404Z",
+  "projectRef": "sfdazqyophgjehwlkhla",
+  "checks": [
+    {
+      "name": "public registration remains closed",
+      "status": 422,
+      "code": "signup_disabled",
+      "pass": true
+    },
+    {
+      "name": "anonymous sign-in remains closed",
+      "status": 422,
+      "code": "anonymous_provider_disabled",
+      "pass": true
+    }
+  ]
+}

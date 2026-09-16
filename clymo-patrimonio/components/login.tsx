@@ -5,6 +5,7 @@ export function Login() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [legacy, setLegacy] = useState(false);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     try {
       setLegacy(localStorage.getItem(LEGACY_KEY) !== null);
@@ -13,6 +14,7 @@ export function Login() {
     }
     if (new URLSearchParams(location.search).has('error'))
       setError('No se pudo validar el acceso. Ingresa nuevamente o consulta al administrador.');
+    setReady(true);
   }, []);
   return (
     <main className="login-page">
@@ -45,6 +47,8 @@ export function Login() {
         )}
         <form
           className="form"
+          method="post"
+          action="/api/auth/login"
           onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
@@ -88,10 +92,11 @@ export function Login() {
               {error}
             </p>
           )}
-          <button className="button primary" disabled={busy || legacy}>
+          <button className="button primary" disabled={!ready || busy || legacy}>
             {busy ? 'Validando acceso…' : 'Ingresar'}
           </button>
         </form>
+        <noscript>Activa JavaScript para ingresar de forma segura.</noscript>
         <p className="muted">
           Usa únicamente tu cuenta de prueba autorizada. Nunca ingreses claves bancarias ni
           información financiera real.

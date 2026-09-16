@@ -35,7 +35,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     await repo.save(next, input.revision);
     return json({ state: await repo.load() });
   } catch (e) {
-    if (e instanceof DatabaseError && e.code === '40001') return json({ error: e.message }, 409);
+    if (e instanceof DatabaseError && (e.code === 'PT409' || e.code === '40001'))
+      return json({ error: e.message }, 409);
     return failure(e);
   }
 }

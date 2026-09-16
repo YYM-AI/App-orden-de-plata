@@ -326,7 +326,7 @@ describe('real database constraints and exact values', () => {
             households.A,
             randomUUID(),
           ]),
-        '40001',
+        'PT409',
       ),
     ));
   it('revoked session JWT loses access at the next database request', () =>

@@ -3,6 +3,20 @@ import AxeBuilder from '@axe-core/playwright';
 import { randomUUID } from 'node:crypto';
 import { authenticate, post, resetA, testAccounts, A, C, origin } from '../support/browser-auth';
 
+test('anonymous login bootstrap scripts are served as JavaScript without redirects', async ({
+  page,
+}) => {
+  const response = await page.request.get('/login');
+  const scripts = [...(await response.text()).matchAll(/<script[^>]*src="([^"]+)"/g)];
+  expect(scripts.length).toBeGreaterThan(0);
+  for (const [, src] of scripts) {
+    const asset = await page.request.get(src, { maxRedirects: 0 });
+    expect(asset.status()).toBe(200);
+    expect(asset.headers()['content-type']).toMatch(/javascript/);
+    expect(await asset.text()).not.toContain('60240000');
+  }
+});
+
 test('unauthenticated pages and API reveal no financial household data', async ({ page }) => {
   for (const path of ['/', '/fuentes', '/revision', '/configuracion']) {
     const r = await page.request.get(path);
@@ -49,8 +63,27 @@ test('invalid credentials and non-allowlisted identities show safe errors', asyn
 });
 test('invalid callback cannot redirect to a supplied external URL', async ({ page }) => {
   await page.goto('/auth/callback?code=invalid&next=https://example.com');
-  await expect(page).toHaveURL(/127\.0\.0\.1:3100\/login\?error=callback/);
+  await expect(page).toHaveURL(origin + '/login?error=callback');
   await expect(page.getByRole('main').getByRole('alert')).toBeVisible();
+});
+test('login without JavaScript cannot submit credentials in the URL', async ({ browser }) => {
+  const context = await browser.newContext({ baseURL: origin, javaScriptEnabled: false });
+  const page = await context.newPage();
+  const requests: string[] = [];
+  page.on('request', (request) => requests.push(request.url()));
+  try {
+    await page.goto('/login');
+    await page.getByLabel('Correo de acceso').fill('disabled-js@clymo.test');
+    await page.getByLabel('Contraseña de acceso').fill('SyntheticOnly-NotAnAccount');
+    await expect(page.getByRole('button', { name: 'Ingresar', exact: true })).toBeDisabled();
+    await page.getByLabel('Contraseña de acceso').press('Enter');
+    expect(
+      requests.every((url) => !url.includes('password=') && !url.includes('SyntheticOnly')),
+    ).toBe(true);
+    expect(new URL(page.url()).search).not.toContain('password');
+  } finally {
+    await context.close();
+  }
 });
 test('legacy browser records require discard and never override database state', async ({
   page,
